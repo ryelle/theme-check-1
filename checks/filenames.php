@@ -42,7 +42,7 @@ class File_Checks implements themecheck {
 		checkcount();
 
 		foreach( $blacklist as $file => $reason ) {
-			if ( $filename = preg_grep( '/' . $file . '/', $filenames ) ) {
+			if ( $filename = preg_grep( '/' . $file . '/i', $filenames ) ) {
 				$error = implode( array_unique( $filename ), ' ' );
 				$this->error[] = sprintf('<span class="tc-lead tc-warning">'.__('WARNING','theme-check').'</span>: '.__('<strong>%1$s</strong> %2$s found.', 'theme-check'), $error, $reason) ;
 				$ret = false;
@@ -50,15 +50,15 @@ class File_Checks implements themecheck {
 		}
 
 		foreach( $musthave as $file ) {
-			if ( !in_array( $file, $filenames ) ) {
-				$this->error[] = sprintf('<span class="tc-lead tc-warning">'.__('WARNING','theme-check').'</span>: '.__('could not find the file <strong>%1$s</strong> in the theme.', 'theme-check'), $file);
+			if ( ! in_array( $file, $filenames ) ) {
+				$this->error[] = sprintf( '<span class="tc-lead tc-warning">' . __( 'WARNING', 'theme-check' ) . '</span>: ' . __( 'Could not find the file <strong>%1$s</strong> in the theme.', 'theme-check' ), $file );
 				$ret = false;
 			}
 		}
 
 		foreach( $rechave as $file => $reason ) {
-			if ( !in_array( $file, $filenames ) ) {
-				$this->error[] = sprintf('<span class="tc-lead tc-recommended">'.__('RECOMMENDED','theme-check').'</span>: '.__('could not find the file <strong>%1$s</strong> in the theme. %2$s', 'theme-check'), $file, $reason );
+			if ( ! in_array( $file, $filenames ) ) {
+				$this->error[] = sprintf( '<span class="tc-lead tc-recommended">' . __( 'RECOMMENDED', 'theme-check' ) . '</span>: ' . __( 'Could not find the file <strong>%1$s</strong> in the theme. %2$s', 'theme-check'), $file, $reason );
 			}
 		}
 
