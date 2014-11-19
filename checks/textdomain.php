@@ -23,7 +23,7 @@ class TextDomainCheck implements themecheck {
 
 					$filename = tc_filename( $php_key );
 					foreach ($matches[0] as $match ) {
-						$grep = tc_grep( ltrim( $match ), $php_key );
+						$grep = tc_grep( ltrim( $match ), $phpfile );
 						preg_match( '/[^\s]*\s[0-9]+/', $grep, $line);
 						$error .= ( !strpos( $error, $line[0] ) ) ? $grep : '';
 					}
@@ -50,12 +50,12 @@ class TextDomainCheck implements themecheck {
 					$count = 0;
 					while ( isset( $matches[1][$count] ) ) {
 						if ( $matches[1][$count] !== $themename ) {
-							$error = tc_grep( $matches[0][$count], $php_key );
+							$error = tc_grep( $matches[0][$count], $phpfile );
 							if ( $matches[1][$count] === 'twentyten' || $matches[1][$count] === 'twentyeleven' ):
 								$this->error[] = sprintf( '<span class=\'tc-lead tc-recommended\'>' . __( 'RECOMMENDED', 'theme-check' ) . '</span>: '. __( 'Text domain problems in <strong>%1$s</strong>. The %2s text domain is being used!%3$s', 'theme-check' ), $filename, $matches[1][$count], $error );
 							else:
 							if ( defined( 'TC_TEST' ) && strpos( strtolower( $themename ), $matches[1][$count] ) === false ) {
-								$error = tc_grep( $matches[0][$count], $php_key );
+								$error = tc_grep( $matches[0][$count], $phpfile );
 								$this->error[] = sprintf( '<span class=\'tc-lead tc-recommended\'>' . __( 'RECOMMENDED', 'theme-check' ) . '</span>: '. __( 'Text domain problems in <strong>%1$s</strong>. %2$s You are using: <strong>%3s</strong>%4$s', 'theme-check' ), $filename, $check, $matches[1][$count], $error );
 							}
 							endif;

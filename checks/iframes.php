@@ -16,7 +16,7 @@ class IframeCheck implements themecheck {
 					$filename = tc_filename( $php_key );
 					$error = ltrim( $matches[1], '(' );
 					$error = rtrim( $error, '(' );
-					$grep = tc_grep( $error, $php_key );
+					$grep = tc_grep( $error, $phpfile );
 					$this->error[] = sprintf('<span class="tc-lead tc-info">'.__('INFO','theme-check').'</span>: '.__('<strong>%1$s</strong> was found in the file <strong>%2$s</strong> %3$s.%4$s', 'theme-check'), $error, $filename, $check, $grep ) ;
 				}
 			}

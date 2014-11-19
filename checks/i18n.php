@@ -43,7 +43,7 @@ class I18NCheck implements themecheck {
 					foreach ($tokens as $token) {
 						if (is_array($token) && in_array( $token[0], array( T_VARIABLE ) ) ) {
 							$filename = tc_filename( $php_key );
-							$grep = tc_grep( ltrim( $match ), $php_key );
+							$grep = tc_grep( ltrim( $match ), $phpfile );
 							preg_match( '/[^\s]*\s[0-9]+/', $grep, $line);
 							$error = ( !strpos( $error, $line[0] ) ) ? $grep : '';
 							$this->error[] = sprintf('<span class="tc-lead tc-recommended">'.__('RECOMMENDED','theme-check').'</span>: '.__('Possible variable <strong>%1$s</strong> found in translation function in <strong>%2$s</strong>. Translation function calls must NOT contain PHP variables. %3$s','theme-check'),

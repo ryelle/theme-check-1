@@ -19,7 +19,7 @@ class AdminMenu implements themecheck {
 				checkcount();
 				if ( preg_match( $key, $phpfile, $matches ) ) {
 					$filename = tc_filename( $php_key );
-					$grep = ( isset( $matches[2] ) ) ? tc_grep( $matches[2], $php_key ) : tc_grep( $matches[1], $php_key );
+					$grep = ( isset( $matches[2] ) ) ? tc_grep( $matches[2], $phpfile ) : tc_grep( $matches[1], $phpfile );
 					$this->error[] = sprintf('<span class="tc-lead tc-warning">'.__( 'WARNING', 'theme-check' ) . '</span>: <strong>%1$s</strong>. %2$s%3$s', $filename, $check, $grep );
 					$ret = false;
 				}
@@ -40,7 +40,7 @@ class AdminMenu implements themecheck {
 				if ( preg_match( $key, $phpfile, $matches ) ) {
 					$filename = tc_filename( $php_key );
 					$error = ltrim( rtrim( $matches[0], '(' ) );
-					$grep = tc_grep( $error, $php_key );
+					$grep = tc_grep( $error, $phpfile );
 					$this->error[] = sprintf('<span class="tc-lead tc-required">'.__( 'REQUIRED', 'theme-check' ) .'</span>: <strong>%1$s</strong>. %2$s%3$s', $filename, $check, $grep);
 					$ret = false;
 				}

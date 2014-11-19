@@ -29,7 +29,7 @@ class Deprecated_Recommended implements themecheck {
 					$filename = tc_filename( $php_key );
 					$error = ltrim( rtrim( $matches[0], '(' ) );
 					$version = $check[0];
-					$grep = tc_grep( $error, $php_key );
+					$grep = tc_grep( $error, $phpfile );
 
 					// Point out the deprecated function.
 					$error_msg = sprintf(
