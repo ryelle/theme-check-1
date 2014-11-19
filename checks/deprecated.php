@@ -229,14 +229,14 @@ class Deprecated implements themecheck {
 				$alt = $check[ $key ];
 				if ( preg_match( '/[\s?]' . $key . '\(/', $phpfile, $matches ) ) {
 					$filename = tc_filename( $php_key );
-					$error = ltrim( rtrim( $matches[0], '(' ) );
+					$error = ltrim( $matches[0] );
 					$version = $check[0];
 					$grep = tc_grep( $error, $phpfile );
 
 					// Point out the deprecated function.
 					$error_msg = sprintf(
 						__( '%1$s found in the file %2$s. Deprecated since version %3$s.', 'theme-check' ),
-						'<strong>' . $error . '()</strong>',
+						'<strong>' . rtrim( $error, '(' ) . '()</strong>',
 						'<strong>' . $filename . '</strong>',
 						'<strong>' . $version . '</strong>'
 					);
