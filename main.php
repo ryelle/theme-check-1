@@ -20,7 +20,7 @@ function check_main( $theme ) {
 	if ( $files ) {
 		foreach( $files as $key => $filename ) {
 			if ( substr( $filename, -4 ) == '.php' ) {
-				$php[$filename] = php_strip_whitespace( $filename );
+				$php[$filename] = file_get_contents( $filename );
 			}
 			else if ( substr( $filename, -4 ) == '.css' ) {
 				$css[$filename] = file_get_contents( $filename );
