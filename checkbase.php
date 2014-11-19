@@ -77,42 +77,78 @@ function checkcount() {
 }
 
 // some functions theme checks use
-function tc_grep( $error, $file ) {
-	$lines = file( $file, FILE_IGNORE_NEW_LINES ); // Read the theme file into an array
-	$line_index = 0;
-	$bad_lines = '';
-	foreach( $lines as $this_line )	{
-		if ( stristr ( $this_line, $error ) ) {
-			$error = str_replace( '"', "'", $error );
-			$this_line = str_replace( '"', "'", $this_line );
-			$error = ltrim( $error );
-		$pre = ( FALSE !== ( $pos = strpos( $this_line, $error ) ) ? substr( $this_line, 0, $pos ) : FALSE );
-		$pre = ltrim( htmlspecialchars( $pre ) );
-			$bad_lines .= "<pre class='tc-grep'>". __("Line ", "theme-check") . ( $line_index+1 ) . ": " . $pre . htmlspecialchars( substr( stristr( $this_line, $error ), 0, 75 ) ) . "</pre>";
-		}
-		$line_index++;
+function tc_grep( $code, $file_contents ) {
+	$code = trim( $code );
+	if ( empty( $code ) ){
+		return 0;
 	}
-	return str_replace( $error, '<span class="tc-grep">' . $error . '</span>', $bad_lines );
+	$html = '';
+	$already_flagged = array();
+
+	// Count the number of linebreaks before our flagged code.
+	$offset = strpos( $file_contents, $code, 0 );
+	while ( false !== ( $offset = strpos( $file_contents, $code, $offset ) ) ) {
+		$count = $offset ? substr_count( $file_contents, "\n", 0, $offset ): 0;
+
+		// We've found x linebreaks before this one, so this is on the next.
+		$line = $count + 1;
+		if ( ! in_array( $line, $already_flagged ) ) {
+			$already_flagged[] = $line;
+
+			// Get this line: string between now and next \n.
+			$sol = $offset ? strrpos( substr( $file_contents, 0, $offset ), "\n" ): 0; // start
+			$eol = strpos( $file_contents, "\n", $offset ); // end
+
+			$string = '';
+			if ( false !== $sol ) {
+				if ( $eol ) {
+					$length = $eol - $sol;
+				} else { // No newline found, we're probably at the end of the file.
+					$length = 200; // A line shouldn't be longer than 200chars.
+				}
+				$string = substr( $file_contents, $sol, $length );
+
+				$line = sprintf( __( 'Line %s', 'theme-check'), $line );
+				$html .= sprintf( '<pre class="tc-grep">%1$s: %2$s</pre>', $line, htmlspecialchars( trim( $string ) ) );
+			}
+		}
+
+		$offset = $offset + 1;
+	}
+
+	return str_replace( $code, '<span class="tc-grep">' . $code . '</span>', $html );
 }
 
-function tc_preg( $preg, $file ) {
-	$lines = file( $file, FILE_IGNORE_NEW_LINES ); // Read the theme file into an array
-	$line_index = 0;
-	$bad_lines = '';
-	$error = '';
-	foreach( $lines as $this_line ) {
-		if ( preg_match( $preg, $this_line, $matches ) ) {
-			$error = $matches[0];
-			$this_line = str_replace( '"', "'", $this_line );
-			$error = ltrim( $error );
-			$pre = ( FALSE !== ( $pos = strpos( $this_line, $error ) ) ? substr( $this_line, 0, $pos ) : FALSE );
-			$pre = ltrim( htmlspecialchars( $pre ) );
-			$bad_lines .= "<pre class='tc-grep'>" . __("Line ", "theme-check") . ( $line_index+1 ) . ": " . $pre . htmlspecialchars( substr( stristr( $this_line, $error ), 0, 75 ) ) . "</pre>";
-		}
-		$line_index++;
+function tc_preg( $pattern, $file_contents ) {
+	$html = '';
 
+	if ( preg_match_all( $pattern, $file_contents, $matches, PREG_OFFSET_CAPTURE | PREG_SET_ORDER ) ){
+		foreach ( $matches as $match ) {
+			$offset = $match[0][1];
+
+			$count = $offset ? substr_count( $file_contents, "\n", 0, $offset ): 0;
+
+			// We've found x linebreaks before this one, so this is on the next.
+			$line = $count + 1;
+
+			$sol = $offset ? strrpos( substr( $file_contents, 0, $offset ), "\n" ): 0; // start
+			$eol = strpos( $file_contents, "\n", $offset ); // end
+
+			if ( false !== $sol ) {
+				if ( $eol ) {
+					$length = $eol - $sol;
+				} else { // No newline found, we're probably at the end of the file.
+					$length = 200; // A line shouldn't be longer than 200chars.
+				}
+				$string = substr( $file_contents, $sol, $length );
+
+				$line = sprintf( __( 'Line %s', 'theme-check'), $line );
+				$html .= sprintf( '<pre class="tc-grep">%1$s: %2$s</pre>', $line, htmlspecialchars( trim( $string ) ) );
+			}
+		}
 	}
-	return str_replace( $error, '<span class="tc-grep">' . $error . '</span>', $bad_lines );
+
+	return $html;
 }
 
 function tc_strxchr($haystack, $needle, $l_inclusive = 0, $r_inclusive = 0){
